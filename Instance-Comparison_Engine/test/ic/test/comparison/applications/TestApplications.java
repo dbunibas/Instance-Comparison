@@ -42,7 +42,7 @@ public class TestApplications extends TestCase {
         this.results = new ArrayList<>();
     }
 
-    public void xtestDataCleaning() {
+    public void testDataCleaning() {
         String basePath = UtilityForTests.getResourcesFolder("datasets" + File.separator + "exp-datacleaning" + File.separator + "bus" + File.separator);
         String pathHolistic = basePath + File.separator + "holistic" + File.separator;
         String pathHoloclean = basePath + File.separator + "holoclean" + File.separator;
@@ -72,7 +72,7 @@ public class TestApplications extends TestCase {
         }
     }
 
-    public void xtestDataExchange() {
+    public void testDataExchange() {
         String basePath = UtilityForTests.getResourcesFolder("datasets" + File.separator + "exp-de" + File.separator + "doctors" + File.separator);
         String sizes[] = {"5k", "25k"};
         String solutions[] = {"wrong", "universal-no-egd", "universal-egd"};

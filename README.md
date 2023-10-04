@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import ic.utility.ICUtility;
 import ic.comparison.operators.IComputeInstanceSimilarity;
+import ic.comparison.operators.ComputeInstanceSimilarityHashing;
 import ic.comparison.InstanceMatchTask;
 import ic.comparison.TupleMapping;
 import speedy.model.database.TupleWithTable;

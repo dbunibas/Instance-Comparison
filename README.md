@@ -9,7 +9,7 @@ To execute some basic experiments:
   -  ic.test.comparison.scalability.TestScalability. It executes both the Exact Algorithm and the Signature Algorithm.
   -  ic.test.comparison.applications.TestApplications. It executes the Signature Algorithm on some target applications like Data Cleaning, Data Exchange and Data Versioning
 
-The following snippet of code provides an example of using the tool to compare two different instances (source and target). We assume that source and target are folders and contain a CSV file for each relational table.
+The following snippet of code provides an example of using the Signature Algorithm (ComputeInstanceSimilarityHashing class) to compare two different instances (source and target). We assume that source and target are folders and contain a CSV file for each relational table.
 
 ```java
 import java.util.Map;

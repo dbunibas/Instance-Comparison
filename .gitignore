@@ -1,0 +1,9 @@
+/Instance-Comparison_Engine/build/classes/
+/Instance-Comparison_Engine/build/test/classes/
+Instance-Comparison.iml
+Instance-Comparison_Engine/misc/.ipynb_checkpoints
+Instance-Comparison_Engine/misc/resources/datasets
+Instance-Comparison_Engine/misc/resources/redundancy
+Instance-Comparison_Engine/misc/resources/similarity
+Instance-Comparison_Engine/nbproject/private
+nbproject.properties

@@ -56,11 +56,18 @@ public class ComparisonScenarioGeneratorWithMappings {
     private int newRandomTuplesPerc = 5;
     private int cellsToChangePerc = 20;
 
+    private Integer maxNumberOfAttrs = null;
+    private List<AttributeRef> attributesToChange = new ArrayList<>();
+
     public ComparisonScenarioGeneratorWithMappings(int newRedundantTuplesPerc, int newRandomTuplesPerc, int cellsToChangePerc, long seed) {
         this.newRedundantTuplesPerc = newRedundantTuplesPerc;
         this.newRandomTuplesPerc = newRandomTuplesPerc;
         this.cellsToChangePerc = cellsToChangePerc;
         this.random = new Random(seed);
+    }
+
+    public void setMaxNumberOfAttrs(Integer maxNumberOfAttrs) {
+        this.maxNumberOfAttrs = maxNumberOfAttrs;
     }
 
     public InstancePair generateWithMappings(String originalDBPath, boolean changeSource, boolean changeTarget) {
@@ -73,6 +80,9 @@ public class ComparisonScenarioGeneratorWithMappings {
         IDatabase rightDB = dbManager.cloneTarget(ICUtility.loadMainMemoryDatabase(originalDBPath), "_right");
         changeOid(rightDB); // TODO: fix not working
         List<TupleWithTable> rightTuples = SpeedyUtility.extractAllTuplesFromDatabaseForGeneration(rightDB);
+        if (maxNumberOfAttrs != null) {
+            initAttrsWithNulls(leftTuples);
+        }
         TupleMapping tupleMapping = initMappings(leftTuples, rightTuples);
         if (changeSource) {
             logger.info("Change Source");
@@ -259,7 +269,13 @@ public class ComparisonScenarioGeneratorWithMappings {
                 continue;
             }
             if (random.nextInt(100) <= cellsToChangePerc) {
-                cellsToChangeInSource.add(cell);
+                if (this.attributesToChange.isEmpty()) {
+                    cellsToChangeInSource.add(cell);
+                } else {
+                    if (this.attributesToChange.contains(cell.getAttributeRef())) {
+                        cellsToChangeInSource.add(cell);
+                    }
+                }
             }
         }
         Map<AttributeRef, IValue> newCellValues = new HashMap<>();
@@ -357,10 +373,24 @@ public class ComparisonScenarioGeneratorWithMappings {
                 newTuple.addCell(cellOid);
                 for (Attribute attribute : table.getAttributes()) {
                     AttributeRef attributeRef = new AttributeRef(tableName, attribute.getName());
-                    CellRef cellRef = new CellRef(newTuple.getOid(), attributeRef);
-                    IValue newValue = generateNewValue(attribute.getType());
-                    Cell cell = new Cell(cellRef, newValue);
-                    newTuple.addCell(cell);
+                    if (this.attributesToChange.isEmpty()) {
+                        CellRef cellRef = new CellRef(newTuple.getOid(), attributeRef);
+                        IValue newValue = generateNewValue(attribute.getType());
+                        Cell cell = new Cell(cellRef, newValue);
+                        newTuple.addCell(cell);
+                    } else {
+                        if (this.attributesToChange.contains(attributeRef)) {
+                            CellRef cellRef = new CellRef(newTuple.getOid(), attributeRef);
+                            IValue newValue = generateNewValue(attribute.getType());
+                            Cell cell = new Cell(cellRef, newValue);
+                            newTuple.addCell(cell);
+                        } else {
+                            CellRef cellRef = new CellRef(newTuple.getOid(), attributeRef);
+                            IValue newValue = generateNewConstantValue(attribute.getType());
+                            Cell cell = new Cell(cellRef, newValue);
+                            newTuple.addCell(cell);
+                        }
+                    }
                 }
                 newTuple.setOidNested(newOID);
                 TupleWithTable newTupleWithTable = new TupleWithTable(tableName, newTuple);
@@ -409,6 +439,14 @@ public class ComparisonScenarioGeneratorWithMappings {
             int randomPlaceholderId = random.nextInt((int) lastPlaceholderId * 2); //50% probability of picking an existing null
             return new NullValue(SpeedyConstants.getStringSkolemPrefixes()[0] + randomPlaceholderId);
         }
+    }
+
+    private IValue generateNewConstantValue(String type) {
+        if (type.equals(Types.INTEGER) || type.equals(REAL)) {
+            return new ConstantValue(random.nextInt(99999));
+        }
+        return new ConstantValue(getRandomString());
+
     }
 
     private String getRandomString() {
@@ -622,6 +660,19 @@ public class ComparisonScenarioGeneratorWithMappings {
         long end = System.currentTimeMillis();
         logger.debug("Time verifyMatchesRedundant (ms): {}", (end - start));
         return tupleMatches;
+    }
+
+    private void initAttrsWithNulls(List<TupleWithTable> leftTuples) {
+        TupleWithTable tuple = leftTuples.get(0);
+        List<Cell> cells = tuple.getTuple().getCells();
+        List<AttributeRef> attributes = new ArrayList<>();
+        for (Cell cell : cells) {
+            if (cell.isOID()) {
+                continue;
+            }
+            attributes.add(cell.getAttributeRef());
+        }
+        this.attributesToChange = attributes.subList(0, this.maxNumberOfAttrs);
     }
 
 }

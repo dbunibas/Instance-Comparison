@@ -56,7 +56,7 @@ public class ComparisonScenarioGeneratorWithMappings {
     private int newRandomTuplesPerc = 5;
     private int cellsToChangePerc = 20;
 
-    private Integer maxNumberOfAttrs = null;
+    private Integer maxNumberOfAttrs = null; // Number of attributes with nulls, if null, it will consider all attributues
     private List<AttributeRef> attributesToChange = new ArrayList<>();
 
     public ComparisonScenarioGeneratorWithMappings(int newRedundantTuplesPerc, int newRandomTuplesPerc, int cellsToChangePerc, long seed) {

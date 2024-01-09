@@ -37,7 +37,7 @@ public class TestScalability extends TestCase {
         this.results = new ArrayList<>();
     }
 
-    public void testScalability() {
+    public void xtestScalability() {
         ComparisonConfiguration.setUseDictionaryEncoding(true);
         ComparisonConfiguration.setForceExaustiveSearch(true);
         ComparisonConfiguration.setTwoWayValueMapping(true);
@@ -47,7 +47,7 @@ public class TestScalability extends TestCase {
         String basePath = UtilityForTests.getResourcesFolder("datasets" + File.separator + "exp-scalability" + File.separator + configGeneration + File.separator);
         System.out.println("BASE_PATH_SCALABILITY: " + basePath);
         String datasets[] = {"doctors", "bikeshare", "github"};
-        String sizes[] = {"500", "1k", "5k", "10k"};
+        String sizes[] = {"500", "1k", "5k", "10k", "100k"};
         String methods[] = {"modifyCellsInSourceAndTarget", "addRandomAndRedundantRowsInSourceAndTarget"};
         for (String method : methods) {
             for (String dataset : datasets) {
@@ -78,7 +78,7 @@ public class TestScalability extends TestCase {
                     long timeGreedy = System.currentTimeMillis() - startGreedy;
                     double scoreGreedy = compareGreedy.getTupleMapping().getScore();
                     String output = generateOutput(method, leftDB, rightDB, compareGreedy.getTupleMapping(), scoreBF, scoreGreedy, timeGreedy, timeBF);
-//                    System.out.println(output);
+//                  System.out.println(output);
                 }
             }
         }
@@ -159,6 +159,62 @@ public class TestScalability extends TestCase {
                 double scoreNoBF = compareGreedyNoBF.getTupleMapping().getScore();
                 String output = generateOutput(method, leftDB, rightDB, compareGreedyNoBF.getTupleMapping(), scoreNoBF, scoreGreedy, timeGreedy, timeNoBF);
 //                System.out.println(output);
+            }
+        }
+        System.out.println("***************************");
+        System.out.println("Method\tSourceStats\tTargetStats\tTupleMappings\tLeftNonMatching\tRightNonMatching\tBFScore\tGreedyScore\tGreedyTime\tBFTime");
+        for (String result : this.results) {
+            System.out.println(result);
+        }
+    }
+
+    public void testAblationAttributes() {
+        ComparisonConfiguration.setUseDictionaryEncoding(true);
+        ComparisonConfiguration.setForceExaustiveSearch(false);
+        ComparisonConfiguration.setTwoWayValueMapping(true);
+        boolean useBF = false; // if true will take too many time
+        String configGeneration = "10-10-10";
+        String basePath = UtilityForTests.getResourcesFolder("datasets" + File.separator + "exp-ablation" + File.separator + configGeneration + File.separator);
+        System.out.println("BASE_PATH_SCALABILITY: " + basePath);
+        String datasets[] = {"github"};
+        String sizes[] = {"500", "1k", "5k"};
+        String methods[] = {"modifyCellsInSourceAndTarget", "addRandomAndRedundantRowsInSourceAndTarget"};
+        String maxAttrsWithNulls[] = {"1", "5", "10", "15", "19"};
+        for (String maxAttrsWithNull : maxAttrsWithNulls) {
+            String basePathExpAttrs = basePath + maxAttrsWithNull + File.separator;
+            for (String method : methods) {
+                for (String dataset : datasets) {
+                    for (String size : sizes) {
+                        String expPath = basePathExpAttrs + dataset + "-" + size + File.separator + method + File.separator;
+                        String pathLeft = expPath + "left";
+                        String pathRight = expPath + "right";
+                        if (method.equals("modifyCellsInSourceAndTarget")) {
+                            setInjectiveFunctionalMapping();
+                        }
+                        if (method.equals("addRandomAndRedundantRowsInSourceAndTarget")) {
+                            setNonInjectiveNonFunctionalMapping();
+                        }
+                        IDatabase leftDB = ICUtility.loadMainMemoryDatabase(pathLeft);
+                        IDatabase rightDB = ICUtility.loadMainMemoryDatabase(pathRight);
+                        IComputeInstanceSimilarity bf = new ComputeInstanceSimilarityBruteForceCompatibility();
+                        IComputeInstanceSimilarity greedy = new ComputeInstanceSimilarityHashing(true);
+                        //IComputeInstanceSimilarity greedy = new ComputeInstanceSimilarityHashing(false);
+                        double scoreBF = -1;
+                        long timeBF = -1;
+                        if (useBF) {
+                            long startBF = System.currentTimeMillis();
+                            InstanceMatchTask compareBF = bf.compare(leftDB, rightDB);
+                            timeBF = System.currentTimeMillis() - startBF;
+                            scoreBF = compareBF.getTupleMapping().getScore();
+                        }
+                        long startGreedy = System.currentTimeMillis();
+                        InstanceMatchTask compareGreedy = greedy.compare(leftDB, rightDB);
+                        long timeGreedy = System.currentTimeMillis() - startGreedy;
+                        double scoreGreedy = compareGreedy.getTupleMapping().getScore();
+                        String output = generateOutput(method+"-Attrs:"+maxAttrsWithNull, leftDB, rightDB, compareGreedy.getTupleMapping(), scoreBF, scoreGreedy, timeGreedy, timeBF);
+//                        System.out.println(output);
+                    }
+                }
             }
         }
         System.out.println("***************************");

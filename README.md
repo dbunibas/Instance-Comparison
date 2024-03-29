@@ -27,7 +27,7 @@ If your path contains spaces or special characters, enclose it in double quotes 
 ## Execute experiments
 
 To execute some basic experiments:
-1) Unzip the resources folder in misc
+1) Unzip the datasets.zip.001 archive in `Instance-Comparison-Engine/core/src/test/resources/`
 2) Execute the following Java Classes in the test package:
   -  ic.test.comparison.scalability.TestScalability. It executes both the Exact Algorithm and the Signature Algorithm.
   -  ic.test.comparison.applications.TestApplications. It executes the Signature Algorithm on some target applications like Data Cleaning, Data Exchange and Data Versioning

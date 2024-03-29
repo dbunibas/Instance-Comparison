@@ -4,7 +4,5 @@ Instance-Comparison.iml
 Instance-Comparison-Engine/misc/.ipynb-checkpoints
 Instance-Comparison-Engine/nbproject/private
 Instance-Comparison-Engine/core/src/test/resources/datasets
-Instance-Comparison-Engine/core/src/test/resources/redundancy
-Instance-Comparison-Engine/core/src/test/resources/similarity
 nbproject.properties
 Instance-Comparison-Engine/build

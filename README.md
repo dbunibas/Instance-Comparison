@@ -3,6 +3,29 @@
 This tool provides a fast way to compare incomplete instances, i.e. instances with labeled nulls. The tool returns a similarity score of instances (a value between 0 and 1) but also differences in compared instances.
 We implemented an exact algorithm that works only on small instances. We also implemented a greedy algorithm called Signature algorithm that can be executed on bigger instances with a minimal difference in the computation of such similarities.
 
+## Comparing Instances
+
+The easiest way to compare two instances is by defining the comparison scenario using a properties file. You can find an example of such a file at: `Instance-Comparison-Engine/core/src/test/resources/similarity/ComparisonTask.properties`
+
+
+### Execution Instructions
+
+To execute the comparison ensure you are in the project's root directory (`Instance-Comparison-Engine`), where the `gradlew` script is located. Then run the command
+
+   - **For Unix-like Systems (Linux/macOS)**:
+     ```sh
+     ./gradlew run --args="/absolute/path/to/ComparisonTask.properties"
+     ```
+   - **For Windows**:
+     ```cmd
+     gradlew.bat run --args="/absolute/path/to/ComparisonTask.properties"
+     ```
+
+If your path contains spaces or special characters, enclose it in double quotes to avoid any issues.
+
+
+## Execute experiments
+
 To execute some basic experiments:
 1) Unzip the resources folder in misc
 2) Execute the following Java Classes in the test package:
@@ -35,4 +58,5 @@ Map<TupleWithTable, Set<TupleWithTable>> tupleMapping = compareGreedy.getTupleMa
 
 ```
 
+## Extra 
 We also provide a Jupyter Notebook in misc folder, used to compute metrics for target applications.

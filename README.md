@@ -60,3 +60,21 @@ Map<TupleWithTable, Set<TupleWithTable>> tupleMapping = compareGreedy.getTupleMa
 
 ## Extra 
 We also provide a Jupyter Notebook in misc folder, used to compute metrics for target applications.
+
+# Citation
+@inproceedings{InstanceComparison,
+  author       = {Boris Glavic and
+                  Giansalvatore Mecca and
+                  Ren{\'{e}}e J. Miller and
+                  Paolo Papotti and
+                  Donatello Santoro and
+                  Enzo Veltri},
+  title        = {Similarity Measures For Incomplete Database Instances},
+  booktitle    = {Proceedings 27th International Conference on Extending Database Technology,
+                  {EDBT} 2024, Paestum, Italy, March 25 - March 28},
+  pages        = {461--473},
+  publisher    = {OpenProceedings.org},
+  year         = {2024},
+  url          = {https://doi.org/10.48786/edbt.2024.40},
+  doi          = {10.48786/EDBT.2024.40}
+}

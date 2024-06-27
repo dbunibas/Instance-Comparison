@@ -61,7 +61,9 @@ Map<TupleWithTable, Set<TupleWithTable>> tupleMapping = compareGreedy.getTupleMa
 ## Extra 
 We also provide a Jupyter Notebook in misc folder, used to compute metrics for target applications.
 
-# Citation
+## Citation
+
+```
 @inproceedings{InstanceComparison,
   author       = {Boris Glavic and
                   Giansalvatore Mecca and
@@ -78,3 +80,4 @@ We also provide a Jupyter Notebook in misc folder, used to compute metrics for t
   url          = {https://doi.org/10.48786/edbt.2024.40},
   doi          = {10.48786/EDBT.2024.40}
 }
+```
